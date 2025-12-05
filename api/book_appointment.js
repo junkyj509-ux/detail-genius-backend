@@ -1,5 +1,8 @@
 import { Client, Environment } from "square";
 
+const LOCATION_ID = process.env.SQUARE_LOCATION_ID;
+const TEAM_MEMBER_ID = process.env.SQUARE_TEAM_MEMBER_ID;
+
 const client = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
   environment: Environment.Sandbox,
@@ -15,9 +18,9 @@ export default async function handler(req, res) {
       customer_name,
       phone,
       email,
-      service_name,
       start_time,
       duration_hours,
+      service_name,
       notes
     } = req.body;
 
@@ -28,24 +31,23 @@ export default async function handler(req, res) {
       });
     }
 
-    const endTime = new Date(start_time);
-    endTime.setHours(endTime.getHours() + duration_hours);
+    const end = new Date(start_time);
+    end.setHours(end.getHours() + duration_hours);
 
-    // Create appointment
-    const response = await client.bookingsApi.createBooking({
+    const { result } = await client.bookingsApi.createBooking({
       booking: {
-        locationId: process.env.SQUARE_LOCATION_ID,
+        locationId: LOCATION_ID,
         startAt: new Date(start_time).toISOString(),
         customerNote: notes || "",
         sellerNote: `Service: ${service_name} | Duration: ${duration_hours} hours`,
         appointmentSegments: [
           {
             durationMinutes: duration_hours * 60,
-            serviceVariationId: "default-service", // Not required in sandbox
-            teamMemberId: "default-team-member"
+            serviceVariationId: "default-service",
+            teamMemberId: TEAM_MEMBER_ID
           }
         ],
-        customerId: undefined, // Optional: can integrate Square Customers later
+        customerId: undefined, // Optional
         headcount: 1
       }
     });
@@ -53,7 +55,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       message: "Appointment created successfully.",
-      booking: response.result.booking
+      booking: result.booking
     });
 
   } catch (err) {
