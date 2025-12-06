@@ -2,6 +2,7 @@ import { Client, Environment } from "square";
 
 const LOCATION_ID = process.env.SQUARE_LOCATION_ID;
 const TEAM_MEMBER_ID = process.env.SQUARE_TEAM_MEMBER_ID;
+const SERVICE_VARIATION_ID = process.env.SQUARE_SERVICE_VARIATION_ID;
 
 const client = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -43,7 +44,7 @@ export default async function handler(req, res) {
         appointmentSegments: [
           {
             durationMinutes: duration_hours * 60,
-            serviceVariationId: "default-service",
+            serviceVariationId: SERVICE_VARIATION_ID,
             teamMemberId: TEAM_MEMBER_ID
           }
         ],

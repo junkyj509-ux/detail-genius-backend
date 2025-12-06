@@ -3,6 +3,7 @@ import { Client, Environment } from "square";
 // Load env vars
 const LOCATION_ID = process.env.SQUARE_LOCATION_ID;
 const TEAM_MEMBER_ID = process.env.SQUARE_TEAM_MEMBER_ID;
+const SERVICE_VARIATION_ID = process.env.SQUARE_SERVICE_VARIATION_ID;
 
 const client = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -60,7 +61,7 @@ export default async function handler(req, res) {
           locationId: LOCATION_ID,
           segmentFilters: [
             {
-              serviceVariationId: "default-service",
+              serviceVariationId: SERVICE_VARIATION_ID,
               teamMemberIdFilter: { any: [TEAM_MEMBER_ID] }
             }
           ]

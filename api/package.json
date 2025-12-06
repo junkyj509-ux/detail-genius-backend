@@ -1,5 +1,8 @@
 {
   "name": "detail-genius-backend",
   "version": "1.0.0",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "square": "30.0.0"
+  }
 }
