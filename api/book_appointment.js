@@ -150,7 +150,7 @@ JSON.stringify(result.booking, (_, v) => typeof v === 'bigint' ? v.toString() : 
     return res.status(200).json({
       success: true,
       message: "Appointment created successfully.",
-      booking: boookingData
+      booking: bookingData
     });
 
   } catch (err) {
