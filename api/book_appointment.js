@@ -141,11 +141,16 @@ export default async function handler(req, res) {
         ]
       }
     });
+	
+	// Convert BigInt values to strings for JSON serialization
+const bookingData = JSON.parse(
+JSON.stringify(result.booking, (_, v) => typeof v === 'bigint' ? v.toString() : v)
+);
 
     return res.status(200).json({
       success: true,
       message: "Appointment created successfully.",
-      booking: result.booking
+      booking: boookingData
     });
 
   } catch (err) {
