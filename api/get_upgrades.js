@@ -49,6 +49,11 @@ function addUpgrade(list, key, reason) {
 }
 
 export default async function handler(req, res) {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
     if (req.method !== "POST") {
       return res.status(405).json({
