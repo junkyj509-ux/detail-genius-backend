@@ -1,11 +1,12 @@
 import OpenAI from "openai";
 
+// Initialize OpenAI client
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
 export default async function handler(req, res) {
-  // CORS
+  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -19,20 +20,21 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, history, lead } = req.body;
+    const { message, history } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: "Missing message" });
     }
 
-    // Build conversation
+    // Build conversation context
     const messages = [
       {
         role: "system",
         content: `
-          You are the Detail Genius AI assistant for an auto detailing business.
-          You answer questions about interior/exterior detailing, ceramic coatings, paint correction,
-          pricing, availability, and recommendations. Keep responses friendly, concise, and useful.
+        You are the AI assistant for Detail Genius Auto Detailing.
+        You answer questions about pricing, services, ceramic coatings,
+        interior/exterior detailing, paint correction, availability, and recommendations.
+        Be friendly, concise, and helpful.
         `
       }
     ];
@@ -45,14 +47,14 @@ export default async function handler(req, res) {
 
     messages.push({ role: "user", content: message });
 
-    // Request to OpenAI
+    // Call OpenAI
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages,
-      max_tokens: 300
+      max_tokens: 200
     });
 
-    const reply = completion.choices?.[0]?.message?.content || "I’m here to help!";
+    const reply = completion.choices?.[0]?.message?.content || "I'm here to help!";
 
     return res.status(200).json({ reply });
 
