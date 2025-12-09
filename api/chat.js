@@ -1,18 +1,16 @@
-import OpenAI from "openai";
+const OpenAI = require("openai");
 
+// Initialize OpenAI client
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-export default async function handler(req, res) {
-  // ---------------------------
-  // CORS (required for browser)
-  // ---------------------------
+module.exports = async function handler(req, res) {
+  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Handle preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -28,51 +26,38 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing message" });
     }
 
-    // ---------------------------
-    // Build the message history
-    // ---------------------------
+    // Build messages list
     const messages = [
       {
         role: "system",
         content: `
-          You are the Detail Genius AI assistant for a professional automotive detailing business.
+          You are the Detail Genius AI assistant.
           You help customers with:
-          • Interior detailing
-          • Exterior detailing
-          • Full detail packages
-          • Paint correction
+          • Detailing questions
           • Ceramic coatings
-          • Boats & RV detailing
-          • Pricing questions
+          • Quotes
           • Recommendations
-          • Availability
-          • Upsells
-          
-          Be friendly, concise, and helpful.
-          Always answer like a real assistant working for Justin at Detail Genius Mobile Detailing.
+          • Booking help
+          Always respond friendly, clear, and concise.
         `
       }
     ];
 
-    // Add previous conversation messages, if any
     if (Array.isArray(history)) {
-      history.forEach(msg => {
+      history.forEach(entry => {
         messages.push({
-          role: msg.role,
-          content: msg.content
+          role: entry.role,
+          content: entry.content
         });
       });
     }
 
-    // Add the new user message
     messages.push({
       role: "user",
       content: message
     });
 
-    // ---------------------------
-    // AI response
-    // ---------------------------
+    // Call OpenAI
     const completion = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages,
@@ -87,4 +72,4 @@ export default async function handler(req, res) {
     console.error("CHAT ERROR:", err);
     return res.status(500).json({ error: "Server error" });
   }
-}
+};
