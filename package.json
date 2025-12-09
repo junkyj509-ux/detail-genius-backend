@@ -1,0 +1,9 @@
+{
+  "name": "detail-genius-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "openai": "^4.42.0",
+    "square": "30.0.0"
+  }
+}
